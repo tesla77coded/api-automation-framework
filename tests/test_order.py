@@ -35,7 +35,7 @@ def test_order_full_flow():
     updated_products = product_client.get_products().json()
     updated_stock = updated_products[first_product_id]["stock"]
 
-    assert updated_stock == initial_stock - 1
+    assert updated_stock == initial_stock - quantity
 
     # payment
     payment_response = order_client.pay_order(order_data.order_id)

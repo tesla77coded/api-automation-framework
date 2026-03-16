@@ -1,6 +1,5 @@
-from os import stat
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 import uuid
 
 app = FastAPI()
@@ -88,3 +87,17 @@ def pay_order(order_id: str):
     order["status"] = "PAID"
 
     return {"order_id": order_id, "payment_status": "SUCCESS"}
+
+
+@app.post("/reset")
+def reset_state():
+    global PRODUCTS, ORDERS
+
+    PRODUCTS = {
+        1: {"name": "Laptop", "price": 1000, "stock": 5},
+        2: {"name": "Phone", "price": 500, "stock": 10},
+    }
+
+    ORDERS = {}
+
+    return {"status": "reset"}
