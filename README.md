@@ -132,6 +132,4 @@ A GitHub Actions pipeline is configured to:
 
 ---
 
-## Author
 
-QA Automation Portfolio Project demonstrating real-world API testing architecture and engineering practices.
