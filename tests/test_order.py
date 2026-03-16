@@ -1,5 +1,6 @@
 from clients.product_client import ProductClient
 from clients.order_client import OrderClient
+from data_factories.order_factory import create_order_payload
 from schemas.order_schema import OrderResponse, PaymentResponse
 
 
@@ -17,7 +18,9 @@ def test_order_full_flow():
     price = first_product["price"]
 
     # create order
-    items = [{"product_id": int(first_product_id), "quantity": 1}]
+    items = create_order_payload(int(first_product_id))
+
+    quantity = items[0]["quantity"]
 
     order_response = order_client.create_order(items)
 
@@ -25,7 +28,7 @@ def test_order_full_flow():
 
     order_data = OrderResponse.model_validate(order_response.json())
 
-    assert order_data.total == price
+    assert order_data.total == price * quantity
     assert order_data.status == "CREATED"
 
     # inventory validation
@@ -42,3 +45,13 @@ def test_order_full_flow():
     payment_data = PaymentResponse.model_validate(payment_response.json())
 
     assert payment_data.payment_status == "SUCCESS"
+
+
+def test_order_insufficient_stock():
+    order_client = OrderClient()
+
+    items = [{"product_id": 1, "quantity": 999}]
+
+    response = order_client.create_order(items)
+
+    assert response.status_code == 400
